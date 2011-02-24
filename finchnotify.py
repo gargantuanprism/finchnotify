@@ -6,7 +6,6 @@ from dbus.mainloop.glib import DBusGMainLoop
 import re
 import time
 import gtk
-import egg.trayicon
 
 # def onlinenotify(name):
 # 	if pynotify.init("does it work?"):
