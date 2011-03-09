@@ -7,6 +7,9 @@ import re
 import time
 import gtk
 
+class FinchNotifier:
+	timeout = 5000
+
 # def onlinenotify(name):
 # 	if pynotify.init("does it work?"):
 # 		n = pynotify.Notification(name, " is online!")
@@ -26,6 +29,7 @@ def notify(purple, account, sender, message):
 	sanshtml = re.sub('<.*?>','',message)
 	if pynotify.init("How about here?"):
 		n = pynotify.Notification(senderAlias, sanshtml, "file:///usr/share/pixmaps/pidgin/tray/hicolor/48x48/status/pidgin-tray-pending.png")
+		n.set_timeout(FinchNotifier.timeout)
 		n.show()
 	else:
 		print "Nope, doesn't work"
@@ -67,6 +71,7 @@ def connect():
 		except:
 			finch = False
 			time.sleep(10)
+			tray.set_visible(False)
 	
 	return bus, dbus.Interface(obj, "im.pidgin.purple.PurpleInterface")
 
@@ -76,6 +81,9 @@ dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
 # bus.add_signal_receiver(buddy_online,
 # 		dbus_interface = "im.pidgin.purple.PurpleInterface",
 # 		signal_name = "BuddySignedOn")
+
+tray = gtk.StatusIcon()
+tray.set_from_file("/usr/share/pixmaps/pidgin/tray/hicolor/48x48/status/pidgin-tray-available.png")
 
 bus, purple = connect()
 
@@ -93,11 +101,8 @@ bus.add_signal_receiver(conv_updated,
 		dbus_interface = "im.pidgin.purple.PurpleInterface",
 		signal_name = "ConversationUpdated")
 
-tray = gtk.StatusIcon()
-tray.set_from_file("/usr/share/pixmaps/pidgin/tray/hicolor/48x48/status/pidgin-tray-available.png")
-
-gtk.main()
 
 loop = gobject.MainLoop()
 loop.run()
 
+gtk.main()
